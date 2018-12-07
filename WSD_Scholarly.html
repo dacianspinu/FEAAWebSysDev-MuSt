@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MuST - Web Sys @ FEAA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <article resource="#" typeof="schema:ScholarlyArticle">
+        <section typeof="sa:AuthorsList">
+            <h1>Authors</h2>
+            <ul>
+                <li typeof="sa:ContributorRole" property="schema:author">
+                    <span typeof="schema:Person" resource="https://www.linkedin.com/in/dacian-spînu-aa6b9a76/">
+                        <meta property="schema:givenName" content="Dacian">
+                        <meta property="schema:additionalName" content="Stefan">
+                        <meta property="schema:familyName" content="Spînu">
+                        <span property="schema:name">Dacian-Stefan Spînu</span>
+                    </span>
+                    <ul>
+                        <li property="schema:roleContactPoint" typeof="schema:ContactPoint">
+                            <a href="mailto:jholland@umich.edu" property="schema:email">dacianspinu@gmail.com</a>
+                        </li>
+                        <li property="schema:roleContactPoint" typeof="schema:ContactPoint">
+                            <a href="tel:+4815162342" property="schema:phoneNumber">+40753604163</a>
+                        </li>
+                    </ul>
+                </li>
+                <li typeof="sa:ContributorRole" property="schema:author">
+                    <span typeof="schema:Person" resource="https://www.linkedin.com/in/cristian-leonte-05040b166/">
+                        <meta property="schema:givenName" content="Cristian">
+                        <meta property="schema:additionalName" content="Paul">
+                        <meta property="schema:familyName" content="Leonte">
+                        <span property="schema:name">Cristian-Paul Leonte</span>
+                    </span>
+                    <ul>
+                        <li property="schema:roleContactPoint" typeof="schema:ContactPoint">
+                            <a href="mailto:jholland@umich.edu" property="schema:email">cristi.leonte95@gmail.com</a>
+                        </li>
+                        <li property="schema:roleContactPoint" typeof="schema:ContactPoint">
+                            <a href="tel:+4815162342" property="schema:phoneNumber">+40747830242</a>
+                        </li>
+                    </ul>
+                </li>
+                <li typeof="sa:ContributorRole" property="schema:author">
+                    <span typeof="schema:Person" resource="https://www.linkedin.com/in/bogdan-condur-892902a4/">
+                        <meta property="schema:givenName" content="Bogdan">
+                        <meta property="schema:familyName" content="Condur">
+                        <span property="schema:name">Bogdan Condur</span>
+                    </span>
+                    <ul>
+                        <li property="schema:roleContactPoint" typeof="schema:ContactPoint">
+                            <a href="mailto:jholland@umich.edu" property="schema:email">bogdan.condur@yahoo.ro</a>
+                        </li>
+                        <li property="schema:roleContactPoint" typeof="schema:ContactPoint">
+                            <a href="tel:+4815162342" property="schema:phoneNumber">+40749291985</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+        <header>
+            <h2 property="schema:name">MuST</h2>
+            <p role="doc-subtitle" property="schema:alternateName">
+            Music Smart Assistant Technical Report
+            </p>
+        </header>
+        <div role="contentinfo">
+            <ol role="directory">
+                <li><a href="#objective">Objective</a></li>
+                <li><a href="#identity">Visual Identity and branding of MuST</a></li>
+                <li><a href="#design-considerations">Overall design considerations</a></li>
+                <li><a href="#onboarding">User on-boarding</a>
+                    <ol role="directory">
+                        <li><a href="#user-registration">User registration</a></li>
+                        <li><a href="#preferences-setup">User account - preferences setup</a></li>
+                        <li><a href="#streaming-setup">User account - streaming account setup</a></li>
+                    </ol>
+                </li>
+                <li><a href="#home-page">Home page</a></li>
+                <li><a href="#data-provenance">Data provenance</a></li>
+            </ol>
+        </div>
+        <section id="objective">
+            <h1>
+                <span>1.</span>
+                Objective
+            </h1>
+            <p>
+                This report examines the design considerations that we took into account when creating the MuST web application, what challenges and problems we had to overcome from a user interaction and user experience point of view. Also, it brings in attention technical data about how the application is going to get the necessary data to be able to work and how that data is consumed by the application.
+            </p>
+        </section>
+        <section id="identity">
+            <h1>
+                <span>2.</span>
+                Visual Identity and branding of MuST
+            </h1>
+            <p>
+                MuST starts off as a service that acts on its own given a set of input data, collects that data, processes it and gives the user a set of personalised music playlists, based on the inputted data. This process we decided to incorporate into the box surrounding the set of headphones.
+            </p>
+            <p>
+                In the process of creating the logo we realized that we can achieve, using the negative space that the box provides, an inversed version of the logo. So, from the original black background with a white box we can create an inversed version with a white background but with black text. This will give us, in different use cases, the same image of the brand, but with the same meaning behind it.
+            </p>
+        </section>
+        <section id="design-considerations">
+            <h1>
+                <span>3.</span>
+                Overall design considerations
+            </h1>
+            <p>
+                Since MuST is going to be a web based application we had to create a design that can be implemented with existing web technologies and also to ensure a high level of compatibility between modern browser at development time.
+            </p>
+            <p>
+                Our main target in this process was a design that made sense being developed with HTML5 and CSS3 and little to none proprietary browser technologies from Google, Apple or other browser implementations. When we mention these proprietary browser technologies we mainly refer to CSS3 properties from the WebKit or Mozilla CSS3 extensions (<i>-webkit-[proprietary_css_property]</i>, <i>-moz-[proprietary_css_property]</i>).
+            </p>
+            <p>
+                We wanted to achieve a simple, yet powerful web design that made sense in today’s plethora of applications, without introducing a lot of interaction non-sense or elements that might disturb the focus of the user.
+            </p>
+            <p>
+                The interaction between the user and the interface is straight forward, the steps to create the account are minimal, the input from the user is also minimal, and the steps for the user to see the automatically generated playlists, interact with them, generate new ones are also minimal.
+            </p>
+        </section>
+        <section id="onboarding">
+            <h1>
+                <span>4.</span>
+                User on-boarding
+            </h1>
+            <p>
+                Modern web applications heavily rely on a lot of user data and every business tries to get as much input as possible in order to provide an output that is as accurate as possible. The main issue in this era is getting the user data in a graceful way, without harassing the user for it.
+            </p>
+            <p>
+                The registration flow consists in only three steps. These steps will ensure that the application has all the data that is necessary to create reliable recommendations for the user and based on the data gathered in this registration flow we can also provide the links between genres and artists, artists and albums, artists and concerts and so on.
+            </p>
+            <section id="user-registration">
+                <h3>
+                    <span>4.1</span>
+                    User registration
+                </h3>
+                <p>
+                    The first screen in the registration process is the account creation. The user will have to input an email address, a password and a confirmation of the chosen password. The decision of confirming the password a second time comes from the need of making sure that the user knows exactly what he inputted. The next step will be an account creation confirmation. The user receives an email that contains an URL that redirects him to the application, sends an HTTP request to the server with the data encoded in the URL and when the response is received from the server the user is sent to the setup screen.
+                </p>
+            </section>
+            <section id="preferences-setup">
+                <h3>
+                    <span>4.2</span>
+                    User account - preferences setup
+                </h3>
+                <p>
+                    After the confirmation of the account the user arrives in the preferences setup screen. In order to create an interface that is not cluttered but in the same time offers a lot of options for the user we decided to put each element in a bubble that the user can click and, in consequence, select as his preference.
+                </p>
+                <p>
+                    In this way we provide a dynamic experience that is playful, yet useful and easy to understand for the user. If the albums, genres or artists that appear in the bubbles are not exactly in accordance with the user preferences, then the user interface gives the possibility to the user to search for his particular musical interest, whatever they may be.
+                </p>
+                <p>
+                    When searching, the option bubbles will change with the content that was inputted and in this way the user input can be much accurate and helpful in the end. When selecting an option, its border will change its colour according to the category of the selected item.
+                </p>
+                <p>
+                    After the user selects his preferred albums, artists or genres and the selection counts more than 5 items he can proceed further by clicking the “DONE” button. This action will send an HTTP POST request to the server with the information selected. When the success response has arrived we can redirect the user to the next step.
+                </p>
+            </section>
+            <section id="streaming-setup">
+                <h3>
+                    <span>4.3</span>
+                    User account - streaming account setup
+                </h3>
+                <p>
+                    After the user has managed to choose and save his preferences the application will redirect him to the next step, which is logging in to a music streaming service. In our mockups we provided the options for the user to login into one of multiple services, including  Apple Music, GooglePlay Music, Spotify and LastFM.
+                </p>
+                <p>
+                    At the time of writing this technical specification the only services that provide a developer API to integrate in web applications are Spotify and LastFM. Apple Music offers an SDK only for the iOS platform using the Swift Language and the music service that Google provides doesn’t even have an API.
+                </p>
+                <p>
+                    However, LastFM and Spotify provide very complete web APIs to integrate in web applications and for the data that we need and the amount of users they already have we think that these services could complement the data that we already have at this point in a very nice way.
+                </p>
+                <p>
+                    Both of these services require a developer account for each of these platforms in order to access the APIs. When registering for a developer account we will have access to all the private and the public keys. Both of these platform provide the same type of integration in the sense that when trying to login an user via an external application that consumes their web APIs will provide us with a login page and if the login in the platform is successful we will redirect the user into the next step.
+                </p>
+                <p>
+                    Of course, we don’t intend that all of our users should have an account on any of these platforms, so if they don’t want to sign in they have the possibility of skipping this step.
+                </p>
+            </section>
+        </section>
+        <section id="home-page">
+            <h1>
+                <span>5.</span>
+                Home page
+            </h1>
+            <p>
+                After the user has logged in he is redirected to the home page, which, as the user is logged in, will be the main entry point in the web application.
+            </p>
+            <p>
+                In the home page we display a list of personalised playlists based on what the user has selected in the preferences setup page and the data that we get from the LastFM or Spotify web APIs (recently played songs, recently liked artists, smart playlists that are created by the before mentioned platforms, etc).
+            </p>
+            <p>
+                Each playlists has a short description of the reasoning that stood for its creation. For example, if we detect that the user set up in his preferences a lot of pop-rock bands we can create a pop-rock playlists that includes tracks from those artists.
+            </p>
+            <p>
+                Also, he has the possibility to create new playlists on demand just by clicking a new button, which will randomise the genre, artist, album or other data that we can base our suggestion on, and will create a playlists for him.
+            </p>
+        </section>
+        <section id="data-provenance">
+            <h1>
+                <span>6.</span>
+                Data provenance
+            </h1>
+            <p>
+                The data for the preferences page setup comes from a free and online available musical database called MusicBrainz. According to the official webpage of the service, it is “an open music encyclopedia that collects music metadata and makes it available to the public.”
+            </p>
+            <p>
+                This service, besides the fact that it is free and open-source, offers us an immensely valuable tool, which is a client library. They provide multiple versions for a multitude of programming languages like node.js or python.
+            </p>
+            <p>
+                Given the fact that most of the data that we will store about the playlists will be stored in a specific format, which is JSON Shareable Playlist Format, for us it will make sense to create a node.js backend, because the client library for node returns the responses in JSON format.
+            </p>
+        </section>
+    </article>
+</body>
+</html>
