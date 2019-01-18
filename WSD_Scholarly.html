@@ -9,7 +9,7 @@
 <body>
     <article resource="#" typeof="schema:ScholarlyArticle">
         <section typeof="sa:AuthorsList">
-            <h1>Authors</h2>
+            <h1>Authors</h1>
             <ul>
                 <li typeof="sa:ContributorRole" property="schema:author">
                     <span typeof="schema:Person" resource="https://www.linkedin.com/in/dacian-spînu-aa6b9a76/">
@@ -80,6 +80,29 @@
                 </li>
                 <li><a href="#home-page">Home page</a></li>
                 <li><a href="#data-provenance">Data provenance</a></li>
+                <li><a href="#system-architecture">Architecture of the system</a>
+                  <ol role="directory">
+                    <li><a href="#server-project-details">Web backend project technology details</a>
+                      <ol role="directory">
+                          <li><a href="#modules-presentation">Web backend project modules presentation</a></li>
+                          <li><a href="#users-module">Users module</a></li>
+                          <li><a href="#genres-module">The genres module</a></li>
+                          <li><a href="#artists-module">The artist module</a></li>
+                          <li><a href="#albums-module">The Albums module</a></li>
+                          <li><a href="#preferences-module">Preferences module and automatically intelligent playlist generation</a></li>
+                          <li><a href="#tracks-module">The tracks module</a></li>
+                          <li><a href="#playlists-module">Playlists module</a></li>
+                      </ol>
+                    </li>
+                  </ol>
+                </li>
+                <li><a href="#frontend-application-specifications">Frontend application specifications</a>
+                  <ol role="directory">
+                    <li><a href="#technologies-and-architecture">Technologies and architecture</a></li>
+                    <li><a href="#data-flow">Data flow</a></li>
+                  </ol>
+                </li>
+
             </ol>
         </div>
         <section id="objective">
@@ -213,6 +236,413 @@
             <p>
                 Given the fact that most of the data that we will store about the playlists will be stored in a specific format, which is JSON Shareable Playlist Format, for us it will make sense to create a node.js backend, because the client library for node returns the responses in JSON format.
             </p>
+        </section>
+        <section id="system-architecture">
+            <h1>
+                <span>7</span>
+                Architecture of the system
+            </h1>
+            <p>
+              This chapter will touch the architecture of the system, how it will work internally and how it will use external data sources as Spotify or LastFM APIs and the open source database called MusicBrainz. Also we will explain the different modules of the backend application and also the frontend web application how they will communicate with each other through a REST API.
+            </p>
+        </section>
+        <section id="server-project-details">
+          <h1>
+              <span>7.1</span>
+              Web backend project technology details
+          </h1>
+          <p>
+            The backend application will act as a RESTful API that will serve data to a frontend client via the HTTP protocol. All the calls are going to be authenticated but from this rule we will except the calls used for the authentication process.
+          </p>
+          <p>
+            The base language for the API will be NodeJS and all of its server functionality will be written using the ExpressJS framework. This framework will allow us to create in a very simplistic way a powerful and reliable API that can be easily opened to other sources other than our application with minimal effort. On top of ExpressJS we will use another very specific API framework called LoopBack. The main advantage of this framework is that it will instantiate a web api with all the user authentication processes in place from start and it has a lot of database connectors available to use. Also it provides a CLI (Command Line Interface) for creating the project but also for the creation of data models. Also, it setups automatically a Swagger API documentation that will be very helpful when developers create the frontend application and can read the documentation that contains all the proper documentation, with each model highlighted independently and all the API calls properly explained.
+          </p>
+          <p>
+            On the database we will use mainly MongoDB to store all the custom data in the application but we will also connect with the MusicBrainz database via the node api client.
+          </p>
+        </section>
+        <section id="modules-presentation">
+          <h1>
+              <span>7.1.1</span>
+              Web backend project modules presentation
+          </h1>
+          <p>
+            The web backend project being based on the LoopBack framework we will use the default project structure. At the root level we will find the node_modules directory which will include all our libraries, the server directory in which we will find all the configuration of the server application and the main entry point of the node app, which is the server.js file. After this we will find the client folder in which we can store the frontend client, but for that we will create another project that is standalone.
+          </p>
+          <p>
+            Because we don’t want to store our models and their logic in the common folder that will make them available to the client folder and by extension to the client app that can be generated by the server we will store them in the server folder. In the sub-folder models we will register all our models which take the form of a JSON file like model.json and for each model we will have a JavaScript file that takes the form of model.js and will contain all the remote methods that we will write for that model.
+          </p>
+          <p>
+            All the data structures will be created with the help of LoopBack’s CLI, like the lb model <model-name>
+          </p>
+        </section>
+        <section id="users-module">
+          <h1>
+              <span>7.1.2</span>
+              Users module
+          </h1>
+          <p>
+            The users module will be created automatically by the generated LoopBack project and will contain all the functionality needed to build our application from an authentication point of view. Some of the functionality provided is the creation of the account, resetting the password and log in the account. Examples of the APIs provided :
+          </p>
+          <code>
+            POST /Users - Creates a new user
+		          User {
+          			realm (string, optional),
+          			username (string, optional),
+          			email (string),
+          			emailVerified (boolean, optional),
+          			id (number, optional)
+		        }
+          </code>
+          <br>
+          <code>
+            POST /Users/login - Logins the user
+		credentials : { 			email: “example@mail.com",
+			“password”: “0000” 		}
+
+          </code>
+          <p>
+            will respond with a 200 OK and the access token that we will now use to sign all the next requests.
+          </p>
+        </section>
+        <section id="genres-module">
+          <h1>
+              <span>7.1.3</span>
+              The genres module
+          </h1>
+          <p>
+            The genres module data structure is going to be very simple, will contain an id and its name. We will this model mainly in the playlists module, albums module and for the account setup screen.
+          </p>
+          <p>
+            In the MongoDB database the model will look like this :
+          </p>
+          <code>
+            {
+    "name": "string",
+    "id": "string"
+}
+          </code>
+          <p>
+            When the user gets in the preferences setup screen we will fetch this data via the API with a GET request in the next form :
+          </p>
+          <code>GET /genres - 200 OK
+[
+  {
+    "name": "string",
+    "id": "string"
+  }
+  ]
+          </code>
+        </section>
+        <section id="artists-module">
+          <h1>
+              <span>7.1.4</span>
+              The artist module
+          </h1>
+          <p>
+            The artists module data structure will be saved in the database as the following structure and we will use it in the playlists module and also to show them to the user in order to save them as preferred artists.
+          </p>
+          <code>
+            {
+    "name": "string",
+    "type": "string",
+    "members": [
+      {
+			“name” : “string”,
+			“enter_date” : “date”,
+			“active” : “boolean”
+		}
+    ],
+    "id": "string"
+  }
+          </code>
+          <p>
+            The type key can have values of “band”, “singer”. The members key will store current and ex members of the artist if its type is “band”. Each member has a name, a date at which he joined the band (enter_date) and if he is a still an active member of the band (active).
+          </p>
+          <p>
+          When retrieving the artists lists for the preferences setup screen we will fetch the data with a GET requests to the artists endpoint as follows.
+          </p>
+          <code>
+            GET /artists - 200 OK
+[
+  {
+    "name": "string",
+    "type": "string",
+    "members": [
+      {
+			“name” : “string”,
+			“enter_date” : “date”,
+			“active” : “boolean”
+		}
+    ],
+    "id": "string"
+  }
+]
+          </code>
+        </section>
+        <section id="albums-module">
+          <h1>
+              <span>7.1.5</span>
+              	The Albums module
+          </h1>
+          <p>
+            The Albums module data structure will be saved in the database in the following structure and it will be also used in the preferences account setup.
+          </p>
+          <code>
+            {
+    "name": "string",
+    "release_date": "date",
+    "artists": [
+      {Artist Object}
+    ],
+    "record_label_name": "string",
+    "id": “string”,
+    "gender": "string"
+  }
+          </code>
+          <p>
+            As in the other modules, in order to get all of the items in the preferences setup screen we will perform a GET request as it follows
+          </p>
+          <p>
+            <code>GET /albums </code> - that will respond with a <code>200 OK</code> status if no other server-side error occurs and will return an array of album objects.
+          </p>
+        </section>
+        <section id="preferences-module">
+          <h1>
+              <span>7.1.6</span>
+              Preferences module and automatically intelligent playlist generation
+          </h1>
+          <p>
+            The preferences module is going to be crucial in the whole application environment due to its importance in the automatic playlist generation.
+          </p>
+          <p>
+            This functionality will need as much data as possible in order to create accurate recommendations.
+          </p>
+          <p>
+            It will take the data that we store in the database via constantly calling the node API that MusicBrainz has and will populate the genres, artists and albums tables. After this we prompt these to the user when creating or updating the preferences.
+          </p>
+          <p>
+            When the user sends these back to the API in order to save them we have a basis for searching tracks based on a combination of liked albums, genres or artists.
+          </p>
+          <p>
+            Then, if the user logs into Spotify we can use parts of the data that this service provides us to
+          </p>
+          <ol>
+            <li>
+              Prompt the user with Spotify Generated playlists (GET /v1/me/playlists)
+            </li>
+            <li>
+              Gather more data about user’s preferred albums, genres or artists (GET /v1/me)
+            </li>
+            <li>
+              Improve experience of the user by creating new playlists using related information from Spotify about already preferred artists (v1/artists/{id}/related-artists)
+            </li>
+
+          </ol>
+          <p>
+            The preferences data will be stored in the MongoDB database in a structure like the following, and when the current user logs in we will be able to track his preferences based on the userId that generated that playlists.
+          </p>
+          <code>
+            {
+  "generated_by": "string",
+  "albums": [
+    "string"
+  ],
+  "artists": [
+    "string"
+  ],
+  "genre": [
+    "string"
+  ],
+  "id": "string"
+}
+          </code>
+          <p>
+            The albums, artists and genre keys will only contain id references to the original items in the database and the generated_by key represents the user who has this particular preference setup.
+          </p>
+        </section>
+        <section id="tracks-module">
+          <h1>
+              <span>7.1.7</span>
+              Tracks module
+          </h1>
+          <p>
+            This module comes as a necessity to keep the track entity and playlist entity separated logically but to be able to integrate the track information into the playlist.
+          </p>
+          <p>
+            The data structure of this module follows the specifications provided by the XSPF community in the form of the JSON XPF (or JSPF) specifications.
+          </p>
+          <p>
+            The data looks as it follows
+          </p>
+          <code>
+            {
+    "name": "string",
+    "release_date": "date",
+    "album": "string",
+    "duration": 0,
+    "artist": {Artist Object},
+    "id": "string"
+  }
+          </code>
+        </section>
+        <section id="playlists-module">
+          <h1>
+              <span>7.1.8</span>
+              Playlists module
+          </h1>
+          <p>
+            The playlists module will be the main component with which a user will interact. The user will be able to generate playlists based on the configured preferences, delete them, see their details.
+          </p>
+          <p>
+          	As we’ve said before, the playlist data will follow the JSPF specification and its data structure will look as follows
+          </p>
+          <code>
+            {
+    "title": "string",
+    "creator": "string",
+    "tracks": [{Track Object}],
+    "id": “string”,
+	   “owner”: “string”
+  }
+          </code>
+          <p>
+            The creator key will hold the entity that created the playlist, if it is the user or a third party, like Spotify. The title will be generated based on the criteria that the application will select to create it upon. The owner key represents the user id that generated that playlists.
+          </p>
+          <p>
+            When the user logs back in the application we will fetch data from Spotify to gather new playlists that the service might’ve created based upon its own criteria and we will prompt those as well in the playlists view.
+          </p>
+        </section>
+        <section id="frontend-application-specifications">
+          <h1>
+              <span>8</span>
+              Frontend application specifications
+          </h1>
+          <p>
+            The web-client that we has to be implemented will be addressed in summary here and it will only touch a few key points, like technologies that need to be used, how it will consume the API that we provide and other technical details like architecture (or folder structure).
+          </p>
+          <p>
+            With the help of frontend application we will also touch a few points in the data flow of the overall solution.
+          </p>
+        </section>
+        <section id="technologies-and-architecture">
+          <h1>
+              <span>8.1</span>
+              Technologies and architecture
+          </h1>
+          <p>
+            The frontend scene has suffered a lot of change in the past few years, with a lot of emerging frameworks rising and package management solutions that are vastly superior than anything this eco-system was dreaming of.
+          </p>
+          <p>
+            But in the last few years a particular technology made its way into the market and it seems to have a lot of benefits that we can use. This technology is called React and is provided by Facebook, it is well documented and also very fast and provides extension capabilities for the solution into the mobile applications territory via the framework that is called React-Native.
+          </p>
+          <p>
+            We will establish a feature-oriented architecture because in this way we can contain the necessary components for a feature enclosed and the ones that are more common and are used in multiple screens or bigger components will be placed closer to the root of the project.
+          </p>
+          <p>
+            So, the first concept is that of the Scene. A scene is a view of the application and it can contain sub-scenes or other components and also services to communicate with the API provided. The components that are contained in scenes that are “brothers” with other scenes cannot be used in any other scene other than the one where it was defined. If we need to do this we will extract that component higher so that it is available to both scenes.
+          </p>
+          <p>
+            A component is a piece of view or logic that handles only one thing. For example, a button component will handle only click events, it will not trigger per-se the call to the server for a specific functionality, rather it will dispatch an event or it will call inside the logic component that handles that part.
+          </p>
+          <p>
+            Services are logic components, like a data service that only handles communication with the server. For example, in the login scene we can have a LoginService that will handle the login calls and will dispatch events to other logic components, like a generic application router, that will respond to that event and will change the scene to the preferences setup scene.
+          </p>
+        </section>
+        <section id="data-flow">
+          <h1>
+              <span>8.2</span>
+              Data flow
+          </h1>
+          <p>
+            We will try to create a generic step-by-step flow of how the data is used throughout the frontend and backend applications.
+          </p>
+          <p>
+            Pre-requisite data flow
+          </p>
+          <ol>
+            <li>
+              Server Application instantiates all the data models
+            </li>
+            <li>
+              Server Application constantly polls the MusicBrainz API to fetch and populates the MongoDB database. We want to do this in order to have a copy on our side in case the MusicBrainz service fails or becomes inactive.
+            </li>
+          </ol>
+          <p>
+            Generic flow
+          </p>
+          <ol>
+            <li>
+              Client application sends a request to create a new user
+            </li>
+            <li>
+              Server application creates a new user in the MongoDB database and sends an email that contains a confirmation url
+            </li>
+            <li>
+              Client accesses the confirmation url and that will trigger a POST request to the server application to confirm the account. Now the user is able to log in
+            </li>
+            <li>
+              Clients sends an object containing “user” and “password”
+            </li>
+            <li>
+              Server checks if the combination is correct and sends back a Bearer Token that the frontend application will now use in order to sign the requests.
+            </li>
+            <li>
+              Client can begin setup of the screens and generates three get requests, one to fetch the albums, one to fetch the artists and one to fetch the genres.
+              <br>
+              <code>
+                GET /artists - responds with an array of artists
+              </code>
+              <br>
+              <code>
+                GET /albums - responds with an array of albums
+              </code>
+              <br>
+              <code>
+                GET /genres - responds with an array of genres
+              </code>
+            </li>
+            <li>
+              Server sends the responses with the data requested and the frontend application can now setup the preferences
+            </li>
+            <li>
+              Frontend application creates a POST request with all the artists, albums and genres to save the new preference.
+              <br>
+              <code>
+                POST /preferences
+                <br>
+{
+  "generated_by": "string",
+  "albums": [
+    "string"
+  ],
+  "artists": [
+    "string"
+  ],
+  "genre": [
+    "string"
+  ],
+  "id": "string"
+}
+
+              </code>
+            </li>
+            <li>
+              The server application receives the data in the preference object, saves it in the database and proceeds to create 5 playlists based on the preferences. In order to do this it will fetch the tracks table for tracks that contain that information and will create the playlist and save them into the database. After this the server will respond with 200 OK.
+            </li>
+            <li>
+              When server has responded the client can check all the playlists in the playlists screen.
+            </li>
+            <li>
+              If the user wants to create another playlist they will hit the “create a new playlist” button and that will generate a new process of creating a playlist that uses the same algorithm used by the 9th step.
+            </li>
+            <li>
+              When the user wants to remove a part of his preferences, lets say an album, they will access the preferences page and will hit the “X” icon and that will trigger a DELETE request for that resource.
+            </li>
+            <li>
+              When the DELETE is handled first the server application will check all the playlists generated by the user that contain that resource and will remove the tracks from the playlists and then will remove the resource from the user’s preferences. After this it will send a 200 OK response.
+            </li>
+          </ol>
         </section>
     </article>
 </body>
